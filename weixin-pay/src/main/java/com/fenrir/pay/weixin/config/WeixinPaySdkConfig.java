@@ -292,6 +292,26 @@ public interface WeixinPaySdkConfig {
 	String WXPAYSDK_VERSION = "WXPaySDK/3.0.9";
 	
 	/**
+	 * 是否为主域名
+	 */
+	boolean IS_PRIMARY_DOMAIN = true;
+	
+	/**
+	 * http请求头key
+	 */
+	String CONTENT_TYPE_KEY = "Content-Type";
+	
+	/**
+	 * http请求投value
+	 */
+	String CONTENT_TYPE_VALUE = "text/xml";
+	
+	/**
+	 * http请求头key
+	 */
+	String USER_AGENT_KEY = "User-Agent";
+	
+	/**
 	 * 用户代理
 	 */
 	String USER_AGENT = new StringBuffer(WXPAYSDK_VERSION)

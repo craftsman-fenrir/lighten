@@ -24,6 +24,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.fenrir.pay.weixin.config.WeixinPayApiConfig;
+import com.fenrir.pay.weixin.config.WeixinPayMerchantConfig;
 import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
 
 /**
@@ -187,34 +189,23 @@ public class WxPayUtil {
 	}
 
 	/**
-	 * 判断签名是否正确,必须包含sign字段,否则返回false.使用MD5签名.
-	 *
-	 * @param data Map类型数据
-	 * @param key API密钥
+	 * 判断签名是否正确，必须包含sign字段，否则返回false
+	 * @param weixinPayApiConfig 微信支付api配置
+	 * @param weixinPayMerchantConfig 微信支付商户配置
+	 * @param data 微信支付请求参数
 	 * @return 签名是否正确
 	 * @throws Exception
 	 */
-	public static boolean isSignatureValid(Map<String, String> data, String key) throws Exception {
-		return isSignatureValid(data, key, WeixinPaySdkConfig.MD5);
-	}
-
-	/**
-	 * 判断签名是否正确,必须包含sign字段,否则返回false.
-	 *
-	 * @param data Map类型数据
-	 * @param key API密钥
-	 * @param signType 签名方式
-	 * @return 签名是否正确
-	 * @throws Exception
-	 */
-	public static boolean isSignatureValid(Map<String, String> data, String key, String signType) throws Exception {
+	public static boolean isSignatureValid(
+		WeixinPayApiConfig weixinPayApiConfig, WeixinPayMerchantConfig weixinPayMerchantConfig, Map<String, String> data
+	) throws Exception {
 		if (!data.containsKey(WeixinPaySdkConfig.FIELD_SIGN)) {
 			return false;
 		}
 
 		String sign = data.get(WeixinPaySdkConfig.FIELD_SIGN);
 
-		return generateSignature(data, key, signType).equals(sign);
+		return generateSignature(data, weixinPayMerchantConfig.getMchKey(), weixinPayApiConfig.getEncryptionMethod()).equals(sign);
 	}
 
 	/**
@@ -229,7 +220,8 @@ public class WxPayUtil {
 	}
 
 	/**
-	 * 生成签名. 注意,若含有sign_type字段,必须和signType参数保持一致.
+	 * 生成签名
+	 * 注意，若含有sign_type字段，必须和signType参数保持一致
 	 *
 	 * @param data 待签名数据
 	 * @param key API密钥

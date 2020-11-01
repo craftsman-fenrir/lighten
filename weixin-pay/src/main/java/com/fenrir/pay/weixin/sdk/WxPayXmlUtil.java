@@ -1,4 +1,4 @@
-package com.wx.wxpay;
+package com.fenrir.pay.weixin.sdk;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

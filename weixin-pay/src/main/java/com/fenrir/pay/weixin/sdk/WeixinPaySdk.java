@@ -5,35 +5,56 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.fenrir.pay.weixin.config.WeixinPayApiConfig;
+import com.fenrir.pay.weixin.config.WeixinPayMerchantConfig;
 import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
-import com.wx.config.WxMerchantConfig;
-import com.wx.config.WxSystemConfig;
 
 /**
- * 微信支付API
- * @author yzm
+ * 微信支付sdk，基础的使用方式
+ * @author fenrir
  *
  */
-public class WxPayApi {
+public class WeixinPaySdk {
+
+	/**
+	 * 微信支付api配置
+	 */
+	private WeixinPayApiConfig weixinPayApiConfig;
+	
+	/**
+	 * 微信支付商户配置
+	 */
+	private WeixinPayMerchantConfig weixinPayMerchantConfig;
+	
+	/**
+	 * 微信支付商户配置
+	 */
+	private WeixinPayHttpTemplate weixinPayHttpTemplate;
+	
+	public WeixinPaySdk(WeixinPayApiConfig weixinPayApiConfig, WeixinPayMerchantConfig weixinPayMerchantConfig) {
+		super();
+		this.weixinPayApiConfig = weixinPayApiConfig;
+		this.weixinPayMerchantConfig = weixinPayMerchantConfig;
+		this.weixinPayHttpTemplate = new WeixinPayHttpTemplate(weixinPayApiConfig, weixinPayMerchantConfig);
+	}
 
 	/**
 	 * 统一下单
-	 * @param requestData
+	 * @param requestData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> unifiedOrder(Map<String, String> requestData) throws Exception {
-
+	public Map<String, String> unifiedOrder(Map<String, String> requestData) throws Exception {
 		String url;
 
-		if (WxSystemConfig.USE_SAND_BOX) {
+		if (weixinPayApiConfig.isUseSandBox()) {
 			url = WeixinPaySdkConfig.SANDBOX_UNIFIEDORDER_URL_SUFFIX;
 		} else {
 			url = WeixinPaySdkConfig.UNIFIEDORDER_URL_SUFFIX;
 		}
 
 		if (WeixinPaySdkConfig.FIELD_NOTIFY_URL != null) {
-			requestData.put(WeixinPaySdkConfig.FIELD_NOTIFY_URL, WxSystemConfig.NOTIFY_PAY_URL);
+			requestData.put(WeixinPaySdkConfig.FIELD_NOTIFY_URL, weixinPayApiConfig.getNotifyPayUrl());
 		}
 
 		String respXml = requestWithoutCert(url, fillRequestData(requestData));
@@ -43,11 +64,11 @@ public class WxPayApi {
 
 	/**
 	 * 统一下单-JSAPI
-	 * @param requestData
+	 * @param requestData 微信支付api请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> unifiedOrderJsapi(Map<String, String> requestData) throws Exception {
+	public Map<String, String> unifiedOrderJsapi(Map<String, String> requestData) throws Exception {
 		// 获取统一下单返回值
 		Map<String, String> response = unifiedOrder(requestData);
 		
@@ -85,7 +106,7 @@ public class WxPayApi {
 				}
 			}
 
-			sb.append("key=").append(WxMerchantConfig.MCH_KEY);
+			sb.append("key=").append(weixinPayMerchantConfig.getMchKey());
 
 			response.put(WeixinPaySdkConfig.FIELD_SIGN, WxPayUtil.MD5(sb.toString()).toUpperCase());
 
@@ -97,14 +118,14 @@ public class WxPayApi {
 
 	/**
 	 * 查询订单
-	 * @param requestData
+	 * @param requestData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> queryOrder(Map<String, String> requestData) throws Exception {
+	public Map<String, String> queryOrder(Map<String, String> requestData) throws Exception {
 		String url;
 
-		if (WxSystemConfig.USE_SAND_BOX) {
+		if (weixinPayApiConfig.isUseSandBox()) {
 			url = WeixinPaySdkConfig.SANDBOX_ORDERQUERY_URL_SUFFIX;
 		} else {
 			url = WeixinPaySdkConfig.ORDERQUERY_URL_SUFFIX;
@@ -117,14 +138,14 @@ public class WxPayApi {
 
 	/**
 	 * 关闭订单
-	 * @param requestData
+	 * @param requestData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> revocationOrder(Map<String, String> requestData) throws Exception {
+	public Map<String, String> revocationOrder(Map<String, String> requestData) throws Exception {
 		String url;
 
-		if (WxSystemConfig.USE_SAND_BOX) {
+		if (weixinPayApiConfig.isUseSandBox()) {
 			url = WeixinPaySdkConfig.SANDBOX_CLOSEORDER_URL_SUFFIX;
 		} else {
 			url = WeixinPaySdkConfig.CLOSEORDER_URL_SUFFIX;
@@ -137,14 +158,14 @@ public class WxPayApi {
 
 	/**
 	 * 申请退款
-	 * @param requestData
+	 * @param requestData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> refund(Map<String, String> requestData) throws Exception {
+	public Map<String, String> refund(Map<String, String> requestData) throws Exception {
 		String url;
 
-		if (WxSystemConfig.USE_SAND_BOX) {
+		if (weixinPayApiConfig.isUseSandBox()) {
 			url = WeixinPaySdkConfig.SANDBOX_REFUND_URL_SUFFIX;
 		} else {
 			url = WeixinPaySdkConfig.REFUND_URL_SUFFIX;
@@ -157,14 +178,14 @@ public class WxPayApi {
 
 	/**
 	 * 查询退款
-	 * @param requestData
+	 * @param requestData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> refundQuery(Map<String, String> requestData) throws Exception {
+	public Map<String, String> refundQuery(Map<String, String> requestData) throws Exception {
 		String url;
 
-		if (WxSystemConfig.USE_SAND_BOX) {
+		if (weixinPayApiConfig.isUseSandBox()) {
 			url = WeixinPaySdkConfig.SANDBOX_REFUNDQUERY_URL_SUFFIX;
 		} else {
 			url = WeixinPaySdkConfig.REFUNDQUERY_URL_SUFFIX;
@@ -178,30 +199,24 @@ public class WxPayApi {
 	/**
 	 * 不需要证书的请求
 	 * 
-	 * @param urlSuffix String
-	 * @param reqData 向wxpay post的请求数据
+	 * @param urlSuffix url后缀
+	 * @param reqData 微信支付api请求参数
 	 * @return API返回数据
 	 * @throws Exception
 	 */
-	public static String requestWithoutCert(String urlSuffix, Map<String, String> reqData) throws Exception {
+	public String requestWithoutCert(String urlSuffix, Map<String, String> reqData) throws Exception {
 		
 		String uuid = reqData.get(WeixinPaySdkConfig.FIELD_NONCE_STR);
 		
 		String reqBody = WxPayUtil.mapToXml(reqData);
 
-		String resp = WxPayRequest.requestWithoutCert(
-			urlSuffix, 
-			uuid, 
-			reqBody
-		);
-		
-		return resp;
+		return weixinPayHttpTemplate.requestWithoutCert(urlSuffix, uuid, reqBody);
 	}
 
     /**
      * 需要证书的请求
-     * @param urlSuffix String
-     * @param reqData 向wxpay post的请求数据  Map
+     * @param urlSuffix url后缀
+     * @param reqData 微信支付api请求参数
      * @return API返回数据
      * @throws Exception
      */
@@ -210,23 +225,16 @@ public class WxPayApi {
 
         String reqBody = WxPayUtil.mapToXml(reqData);
 
-        String resp = WxPayRequest.requestWithCert(
-            urlSuffix,
-            uuid,
-            reqBody
-        );
-
-        return resp;
+        return weixinPayHttpTemplate.requestWithCert(urlSuffix, uuid, reqBody);
     }
 
     /**
-	 * 处理 HTTPS API返回数据,转换成Map对象.return_code为SUCCESS时,验证签名.
-	 * 
-	 * @param xmlStr API返回的XML格式数据
-	 * @return Map类型数据
-	 * @throws Exception
-	 */
-	public static Map<String, String> processResponseXml(String xmlStr) throws Exception {
+     * 处理 HTTPS API返回数据，转换成map对象.return_code为SUCCESS时，验证签名
+     * @param xmlStr api返回的xml数据
+     * @return 转换成map格式的xmlStr
+     * @throws Exception
+     */
+	public Map<String, String> processResponseXml(String xmlStr) throws Exception {
 		String return_code;
 
 		Map<String, String> respData = WxPayUtil.xmlToMap(xmlStr);
@@ -251,41 +259,41 @@ public class WxPayApi {
 	}
 	
 	/**
-	 * 向 Map 中添加 appid,mch_id,nonce_str,sign_type,sign
-	 * 该函数适用于商户适用于统一下单等接口,不适用于红包,代金券接口
-	 *
-	 * @param reqData
+	 * 调用微信支付api前，补全请求参数
+	 * 该函数适用于商户适用于统一下单等接口，不适用于红包，代金券接口
+	 * @param reqData 微信支付请求参数
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> fillRequestData(Map<String, String> reqData) throws Exception {
+	public Map<String, String> fillRequestData(Map<String, String> reqData) throws Exception {
 //		if (!reqData.containsKey(WeixinPaySdkConfig.FIELD_APPID)) {
 //			reqData.put(WeixinPaySdkConfig.FIELD_APPID, MerchantConfig.SHOP_APP_ID);
 //		}
 
-		reqData.put(WeixinPaySdkConfig.FIELD_APPID, WxMerchantConfig.SHOP_APP_ID);
+		reqData.put(WeixinPaySdkConfig.FIELD_APPID, weixinPayMerchantConfig.getAppid());
 
-		reqData.put(WeixinPaySdkConfig.FIELD_MCH_ID, WxMerchantConfig.MCH_ID);
+		reqData.put(WeixinPaySdkConfig.FIELD_MCH_ID, weixinPayMerchantConfig.getMchId());
 
 		reqData.put(WeixinPaySdkConfig.FIELD_NONCE_STR, WxPayUtil.generateNonceStr());
 
-		reqData.put(WeixinPaySdkConfig.FIELD_SIGN_TYPE, WxSystemConfig.ENCRYPTION_METHOD);
+		reqData.put(WeixinPaySdkConfig.FIELD_SIGN_TYPE, weixinPayApiConfig.getEncryptionMethod());
 
-		reqData.put(WeixinPaySdkConfig.FIELD_SIGN, WxPayUtil.generateSignature(reqData, WxMerchantConfig.MCH_KEY, WxSystemConfig.ENCRYPTION_METHOD));
+		reqData.put(WeixinPaySdkConfig.FIELD_SIGN, WxPayUtil.generateSignature(
+			reqData, weixinPayMerchantConfig.getMchKey(), weixinPayApiConfig.getEncryptionMethod())
+		);
 
 		return reqData;
 	}
 
 	/**
-	 * 判断XML数据的sign是否有效,必须包含sign字段,否则返回false.
-	 *
-	 * @param reqData 向wxpay post的请求数据
+	 * 判断XML数据的sign是否有效，必须包含sign字段，否则返回false
+	 * @param reqData 微信支付请求参数
 	 * @return 签名是否有效
 	 * @throws Exception
 	 */
-	public static boolean isResponseSignatureValid(Map<String, String> reqData) throws Exception {
+	public boolean isResponseSignatureValid(Map<String, String> reqData) throws Exception {
 		// 返回数据的签名方式和请求中给定的签名方式是一致的
-		return WxPayUtil.isSignatureValid(reqData, WxMerchantConfig.MCH_KEY, WxSystemConfig.ENCRYPTION_METHOD);
+		return WxPayUtil.isSignatureValid(weixinPayApiConfig, weixinPayMerchantConfig, reqData);
 	}
 	
 }

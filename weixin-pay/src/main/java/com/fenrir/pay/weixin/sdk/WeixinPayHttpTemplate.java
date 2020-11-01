@@ -1,4 +1,4 @@
-package com.wx.wxpay;
+package com.fenrir.pay.weixin.sdk;
 
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -25,32 +25,33 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
+import com.fenrir.pay.weixin.config.WeixinPayApiConfig;
+import com.fenrir.pay.weixin.config.WeixinPayMerchantConfig;
 import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
-import com.wx.config.WxMerchantConfig;
-import com.wx.config.WxSystemConfig;
 
 /**
- * 通过HTTP向微信发起通讯
- * @author yzm
+ * 微信支付http请求的模板
+ * @author fenrir
  *
  */
-public class WxPayRequest {
+public class WeixinPayHttpTemplate {
 
-	/** API地址 */
-	private static final String DOMAIN = WeixinPaySdkConfig.DOMAIN_API;
+	/**
+	 * 微信支付api配置
+	 */
+	private WeixinPayApiConfig weixinPayApiConfig;
 	
-	/** 是否为主域名 */
-	private static final boolean IS_PRIMARY_DOMAIN = true;
+	/**
+	 * 微信支付商户配置
+	 */
+	private WeixinPayMerchantConfig weixinPayMerchantConfig;
 	
-	/** HTTP请求头key */
-	private static final String CONTENT_TYPE_KEY = "Content-Type";
-	
-	/** HTTP请求头value */
-	private static final String CONTENT_TYPE_VALUE = "text/xml";
-	
-	/** HTTP请求头key */
-	private static final String USER_AGENT_KEY = "User-Agent";
-	
+	public WeixinPayHttpTemplate(WeixinPayApiConfig weixinPayApiConfig, WeixinPayMerchantConfig weixinPayMerchantConfig) {
+		super();
+		this.weixinPayApiConfig = weixinPayApiConfig;
+		this.weixinPayMerchantConfig = weixinPayMerchantConfig;
+	}
+
 	/**
 	 * 请求,只请求一次,不做重试
 	 * 
@@ -63,17 +64,17 @@ public class WxPayRequest {
 	 * @return
 	 * @throws Exception
 	 */
-	private static String requestOnce(String domain, String urlSuffix, String data, int connectTimeoutMs,
+	private String requestOnce(String domain, String urlSuffix, String data, int connectTimeoutMs,
 			int readTimeoutMs, boolean useCert) throws Exception {
 		BasicHttpClientConnectionManager connManager;
 
 		if (useCert) {
 			// 证书
-			char[] password = WxMerchantConfig.MCH_ID.toCharArray();
+			char[] password = weixinPayMerchantConfig.getMchId().toCharArray();
 
-			InputStream certStream = WxMerchantConfig.CERT_STREAM;
+			InputStream certStream = weixinPayMerchantConfig.getCertStream();
 
-			KeyStore ks = KeyStore.getInstance(WxMerchantConfig.CERT_FORMAT);
+			KeyStore ks = KeyStore.getInstance(weixinPayMerchantConfig.getCERT_FORMAT());
 
 			ks.load(certStream, password);
 
@@ -83,21 +84,21 @@ public class WxPayRequest {
 			kmf.init(ks, password);
 
 			// 创建 SSLContext
-			SSLContext sslContext = SSLContext.getInstance(WxSystemConfig.TLS);
+			SSLContext sslContext = SSLContext.getInstance(WeixinPaySdkConfig.TLS);
 
 			sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
 
 			SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(
 				sslContext,
-				new String[] {WxSystemConfig.TLS_V1}, 
+				new String[] {WeixinPaySdkConfig.TLS_V1}, 
 				null, 
 				new DefaultHostnameVerifier()
 			);
 
 			connManager = new BasicHttpClientConnectionManager(
 				RegistryBuilder.<ConnectionSocketFactory> create()
-					.register(WxSystemConfig.HTTP, PlainConnectionSocketFactory.getSocketFactory())
-					.register(WxSystemConfig.HTTPS, sslConnectionSocketFactory)
+					.register(WeixinPaySdkConfig.HTTP, PlainConnectionSocketFactory.getSocketFactory())
+					.register(WeixinPaySdkConfig.HTTPS, sslConnectionSocketFactory)
 					.build(), 
 				null, 
 				null, 
@@ -106,8 +107,8 @@ public class WxPayRequest {
 		} else {
 			connManager = new BasicHttpClientConnectionManager(
 				RegistryBuilder.<ConnectionSocketFactory> create()
-					.register(WxSystemConfig.HTTP, PlainConnectionSocketFactory.getSocketFactory())
-					.register(WxSystemConfig.HTTPS, SSLConnectionSocketFactory.getSocketFactory())
+					.register(WeixinPaySdkConfig.HTTP, PlainConnectionSocketFactory.getSocketFactory())
+					.register(WeixinPaySdkConfig.HTTPS, SSLConnectionSocketFactory.getSocketFactory())
 					.build(),
 				null, 
 				null, 
@@ -119,7 +120,7 @@ public class WxPayRequest {
 				.setConnectionManager(connManager)
 				.build();
 
-		String url = WxSystemConfig.HTTPS_PREFIX + domain + urlSuffix;
+		String url = WeixinPaySdkConfig.HTTPS_PREFIX + domain + urlSuffix;
 		HttpPost httpPost = new HttpPost(url);
 
 		RequestConfig requestConfig = RequestConfig.custom()
@@ -129,14 +130,14 @@ public class WxPayRequest {
 		
 		httpPost.setConfig(requestConfig);
 
-		StringEntity postEntity = new StringEntity(data, WxSystemConfig.UTF_8);
-		httpPost.addHeader(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE);
-		httpPost.addHeader(USER_AGENT_KEY, WeixinPaySdkConfig.USER_AGENT + " " + WxMerchantConfig.MCH_ID);
+		StringEntity postEntity = new StringEntity(data, WeixinPaySdkConfig.UTF_8);
+		httpPost.addHeader(WeixinPaySdkConfig.CONTENT_TYPE_KEY, WeixinPaySdkConfig.CONTENT_TYPE_VALUE);
+		httpPost.addHeader(WeixinPaySdkConfig.USER_AGENT_KEY, WeixinPaySdkConfig.USER_AGENT + " " + weixinPayMerchantConfig.getMchId());
 		httpPost.setEntity(postEntity);
 
 		HttpResponse httpResponse = httpClient.execute(httpPost);
 		HttpEntity httpEntity = httpResponse.getEntity();
-		return EntityUtils.toString(httpEntity, WxSystemConfig.UTF_8);
+		return EntityUtils.toString(httpEntity, WeixinPaySdkConfig.UTF_8);
 	}
 	
 	/**
@@ -150,7 +151,9 @@ public class WxPayRequest {
 	 * @return
 	 * @throws Exception
 	 */
-	private static String request(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean useCert) throws Exception {
+	private String request(
+		String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean useCert
+	) throws Exception {
 		Exception exception = null;
 
 		long elapsedTimeMillis = 0;
@@ -164,18 +167,18 @@ public class WxPayRequest {
 		boolean firstHasReadTimeout = false;
 
 		try {
-			String result = requestOnce(DOMAIN, urlSuffix, data, connectTimeoutMs, readTimeoutMs,
+			String result = requestOnce(WeixinPaySdkConfig.DOMAIN_API, urlSuffix, data, connectTimeoutMs, readTimeoutMs,
 					useCert);
 			elapsedTimeMillis = System.currentTimeMillis() - startTimestampMs;
 
 			// 上报网络状态
 			//config.getWXPayDomain().report(DOMAIN, elapsedTimeMillis, exception);
 
-			WxPayReport.getInstance().report(
+			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid, 
 				elapsedTimeMillis, 
-				DOMAIN, 
-				IS_PRIMARY_DOMAIN,
+				WeixinPaySdkConfig.DOMAIN_API, 
+				WeixinPaySdkConfig.IS_PRIMARY_DOMAIN,
 				connectTimeoutMs, 
 				readTimeoutMs, 
 				firstHasDnsErr, 
@@ -193,11 +196,11 @@ public class WxPayRequest {
 
 			/*WxPayUtil.getLogger().warn("UnknownHostException for domainInfo {}", DOMAIN, IS_PRIMARY_DOMAIN);*/
 
-			WxPayReport.getInstance().report(
+			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid,
 				elapsedTimeMillis,
-				DOMAIN,
-				IS_PRIMARY_DOMAIN,
+				WeixinPaySdkConfig.DOMAIN_API,
+				WeixinPaySdkConfig.IS_PRIMARY_DOMAIN,
 				connectTimeoutMs,
 				readTimeoutMs,
 				firstHasDnsErr,
@@ -213,11 +216,11 @@ public class WxPayRequest {
 
 			/*WxPayUtil.getLogger().warn("connect timeout happened for domainInfo {}", DOMAIN, IS_PRIMARY_DOMAIN);*/
 
-			WxPayReport.getInstance().report(
+			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid, 
 				elapsedTimeMillis, 
-				DOMAIN, 
-				IS_PRIMARY_DOMAIN,
+				WeixinPaySdkConfig.DOMAIN_API, 
+				WeixinPaySdkConfig.IS_PRIMARY_DOMAIN,
 				connectTimeoutMs, 
 				readTimeoutMs, 
 				firstHasDnsErr, 
@@ -233,11 +236,11 @@ public class WxPayRequest {
 
 			/*WxPayUtil.getLogger().warn("timeout happened for domainInfo {}", DOMAIN, IS_PRIMARY_DOMAIN);*/
 
-			WxPayReport.getInstance().report(
+			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid, 
 				elapsedTimeMillis, 
-				DOMAIN, 
-				IS_PRIMARY_DOMAIN,
+				WeixinPaySdkConfig.DOMAIN_API, 
+				WeixinPaySdkConfig.IS_PRIMARY_DOMAIN,
 				connectTimeoutMs, 
 				readTimeoutMs, 
 				firstHasDnsErr, 
@@ -249,11 +252,11 @@ public class WxPayRequest {
 
 			elapsedTimeMillis = WxPayUtil.getCurrentTimestampMs() - startTimestampMs;
 
-			WxPayReport.getInstance().report(
+			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid, 
 				elapsedTimeMillis, 
-				DOMAIN, 
-				IS_PRIMARY_DOMAIN,
+				WeixinPaySdkConfig.DOMAIN_API, 
+				WeixinPaySdkConfig.IS_PRIMARY_DOMAIN,
 				connectTimeoutMs, 
 				readTimeoutMs, 
 				firstHasDnsErr, 
@@ -276,13 +279,13 @@ public class WxPayRequest {
 	 * @param data
 	 * @return
 	 */
-	public static String requestWithoutCert(String urlSuffix, String uuid, String data) throws Exception {
+	public String requestWithoutCert(String urlSuffix, String uuid, String data) throws Exception {
 		return request(
 			urlSuffix, 
 			uuid, 
 			data, 
-			WxSystemConfig.HTTP_CONNECT_TIMEOUT_MS, 
-			WxSystemConfig.HTTP_READ_TIMEOUT_MS, 
+			weixinPayApiConfig.getHttpConnectTimeoutMs(), 
+			weixinPayApiConfig.getHttpReadTimeoutMs(), 
 			false
 		);
 	}
@@ -295,13 +298,13 @@ public class WxPayRequest {
 	 * @param data
 	 * @return
 	 */
-	public static String requestWithCert(String urlSuffix, String uuid, String data) throws Exception {
+	public String requestWithCert(String urlSuffix, String uuid, String data) throws Exception {
 		return request(
 			urlSuffix, 
 			uuid, 
 			data, 
-			WxSystemConfig.HTTP_CONNECT_TIMEOUT_MS, 
-			WxSystemConfig.HTTP_READ_TIMEOUT_MS, 
+			weixinPayApiConfig.getHttpConnectTimeoutMs(), 
+			weixinPayApiConfig.getHttpReadTimeoutMs(), 
 			true
 		);
 	}

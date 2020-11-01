@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class WeixinApiConfig {
+public class WeixinPayApiConfig {
 	
 	/**
 	 * 是否使用沙箱环境
@@ -64,5 +64,5 @@ public class WeixinApiConfig {
 	 * 批量上报，一次最多上报多个数据
 	 */
 	private int reportBatchSize;
-	
+
 }
