@@ -16,7 +16,7 @@ import com.fenrir.pay.weixin.entity.RefundResponseEntity;
 import com.fenrir.pay.weixin.entity.UnifiedOrderRequestEntity;
 import com.fenrir.pay.weixin.entity.UnifiedOrderResponseEntity;
 import com.fenrir.pay.weixin.sdk.WeixinPaySdk;
-import com.fenrir.pay.weixin.sdk.WxPayUtil;
+import com.fenrir.pay.weixin.sdk.WeixinPayUtil;
 
 /**
  * 微信支付的api实现
@@ -42,7 +42,7 @@ public class WeixinPayApi {
 	 */
 	public UnifiedOrderResponseEntity unifiedOrder(UnifiedOrderRequestEntity request) throws Exception {
 		// 请求转map
-		Map<String, String> requestData = WxPayUtil.entityToMap(request);
+		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
 
 		// 调用API
 		Map<String, String> responseData = null;
@@ -54,7 +54,7 @@ public class WeixinPayApi {
 		}
 
 		// 响应转实体
-		return WxPayUtil.mapToEntity(UnifiedOrderResponseEntity.class, responseData);
+		return WeixinPayUtil.mapToEntity(UnifiedOrderResponseEntity.class, responseData);
 	}
 
 	/**
@@ -64,13 +64,13 @@ public class WeixinPayApi {
 	 */
 	public QueryOrderResponseEntity queryOrder(QueryOrderRequestEntity request) throws Exception {
 		// 请求转map
-		Map<String, String> requestData = WxPayUtil.entityToMap(request);
+		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
 
 		// 调用API
 		Map<String, String> responseData = weixinPaySdk.queryOrder(requestData);
 
 		// 响应转实体
-		return WxPayUtil.mapToEntity(QueryOrderResponseEntity.class, responseData);
+		return WeixinPayUtil.mapToEntity(QueryOrderResponseEntity.class, responseData);
 	}
 
 	/**
@@ -80,13 +80,13 @@ public class WeixinPayApi {
 	 */
 	public CloseOrderResponseEntity revocationOrder(CloseOrderRequestEntity request) throws Exception {
 		// 请求转map
-		Map<String, String> requestData = WxPayUtil.entityToMap(request);
+		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
 
 		// 调用API
 		Map<String, String> responseData = weixinPaySdk.revocationOrder(requestData);
 
 		// 响应转实体
-		return WxPayUtil.mapToEntity(CloseOrderResponseEntity.class, responseData);
+		return WeixinPayUtil.mapToEntity(CloseOrderResponseEntity.class, responseData);
 	}
 
 	/**
@@ -96,13 +96,13 @@ public class WeixinPayApi {
 	 */
 	public RefundResponseEntity refund(RefundRequestEntity request) throws Exception {
 		// 请求转map
-		Map<String, String> requestData = WxPayUtil.entityToMap(request);
+		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
 
 		// 调用API
 		Map<String, String> responseData = weixinPaySdk.refund(requestData);
 
 		// 响应转实体
-		return WxPayUtil.mapToEntity(RefundResponseEntity.class, responseData);
+		return WeixinPayUtil.mapToEntity(RefundResponseEntity.class, responseData);
 	}
 
 	/**
@@ -112,13 +112,13 @@ public class WeixinPayApi {
 	 */
 	public RefundQueryResponseEntity refundQuery(RefundQueryRequestEntity request) throws Exception {
 		// 请求转map
-		Map<String, String> requestData = WxPayUtil.entityToMap(request);
+		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
 
 		// 调用API
 		Map<String, String> responseData = weixinPaySdk.refundQuery(requestData);
 
 		// 响应转实体
-		return WxPayUtil.mapToEntity(RefundQueryResponseEntity.class, responseData);
+		return WeixinPayUtil.mapToEntity(RefundQueryResponseEntity.class, responseData);
 	}
 
 }

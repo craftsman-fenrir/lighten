@@ -105,7 +105,7 @@ public class WeixinPayReport {
 			}
 
 			try {
-				String sign = WxPayUtil.HMACSHA256(sb.toString(), key);
+				String sign = WeixinPayUtil.HMACSHA256(sb.toString(), key);
 
 				sb.append(sign);
 
@@ -213,7 +213,7 @@ public class WeixinPayReport {
 	public void report(String uuid, long elapsedTimeMillis, String firstDomain, boolean primaryDomain,
 			int firstConnectTimeoutMillis, int firstReadTimeoutMillis, boolean firstHasDnsError,
 			boolean firstHasConnectTimeout, boolean firstHasReadTimeout) {
-		long currentTimestamp = WxPayUtil.getCurrentTimestamp();
+		long currentTimestamp = WeixinPayUtil.getCurrentTimestamp();
 
 		ReportInfo reportInfo = new ReportInfo(uuid, currentTimestamp, elapsedTimeMillis, firstDomain, primaryDomain,
 				firstConnectTimeoutMillis, firstReadTimeoutMillis, firstHasDnsError, firstHasConnectTimeout,

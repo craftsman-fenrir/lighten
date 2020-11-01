@@ -212,7 +212,7 @@ public class WeixinPayHttpTemplate {
 
 			firstHasConnectTimeout = true;
 
-			elapsedTimeMillis = WxPayUtil.getCurrentTimestampMs() - startTimestampMs;
+			elapsedTimeMillis = WeixinPayUtil.getCurrentTimestampMs() - startTimestampMs;
 
 			/*WxPayUtil.getLogger().warn("connect timeout happened for domainInfo {}", DOMAIN, IS_PRIMARY_DOMAIN);*/
 
@@ -232,7 +232,7 @@ public class WeixinPayHttpTemplate {
 
 			firstHasReadTimeout = true;
 
-			elapsedTimeMillis = WxPayUtil.getCurrentTimestampMs() - startTimestampMs;
+			elapsedTimeMillis = WeixinPayUtil.getCurrentTimestampMs() - startTimestampMs;
 
 			/*WxPayUtil.getLogger().warn("timeout happened for domainInfo {}", DOMAIN, IS_PRIMARY_DOMAIN);*/
 
@@ -250,7 +250,7 @@ public class WeixinPayHttpTemplate {
 		} catch (Exception ex) {
 			exception = ex;
 
-			elapsedTimeMillis = WxPayUtil.getCurrentTimestampMs() - startTimestampMs;
+			elapsedTimeMillis = WeixinPayUtil.getCurrentTimestampMs() - startTimestampMs;
 
 			WeixinPayReport.getInstance(weixinPayApiConfig, weixinPayMerchantConfig).report(
 				uuid, 

@@ -7,9 +7,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 
 /**
- * 2018/7/3
+ * 微信支付xml工具
+ * @author fenrir
+ *
  */
-public final class WxPayXmlUtil {
+public final class WeixinPayXmlUtil {
 	
 	private static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
 	

@@ -30,10 +30,10 @@ import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
 
 /**
  * 微信支付工具
- * @author yzm
+ * @author fenrir
  *
  */
-public class WxPayUtil {
+public class WeixinPayUtil {
 
 	private static final String SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -50,7 +50,7 @@ public class WxPayUtil {
 		try {
 			Map<String, String> data = new HashMap<String, String>();
 
-			DocumentBuilder documentBuilder = WxPayXmlUtil.newDocumentBuilder();
+			DocumentBuilder documentBuilder = WeixinPayXmlUtil.newDocumentBuilder();
 
 			InputStream stream = new ByteArrayInputStream(strXML.getBytes("UTF-8"));
 
@@ -91,7 +91,7 @@ public class WxPayUtil {
 	 * @throws Exception
 	 */
 	public static String mapToXml(Map<String, String> data) throws Exception {
-		org.w3c.dom.Document document = WxPayXmlUtil.newDocument();
+		org.w3c.dom.Document document = WeixinPayXmlUtil.newDocument();
 
 		org.w3c.dom.Element root = document.createElement("xml");
 

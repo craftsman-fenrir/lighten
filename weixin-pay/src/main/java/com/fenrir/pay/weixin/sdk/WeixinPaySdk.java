@@ -108,7 +108,7 @@ public class WeixinPaySdk {
 
 			sb.append("key=").append(weixinPayMerchantConfig.getMchKey());
 
-			response.put(WeixinPaySdkConfig.FIELD_SIGN, WxPayUtil.MD5(sb.toString()).toUpperCase());
+			response.put(WeixinPaySdkConfig.FIELD_SIGN, WeixinPayUtil.MD5(sb.toString()).toUpperCase());
 
 			response.put("time_stamp", time);
 		}
@@ -208,7 +208,7 @@ public class WeixinPaySdk {
 		
 		String uuid = reqData.get(WeixinPaySdkConfig.FIELD_NONCE_STR);
 		
-		String reqBody = WxPayUtil.mapToXml(reqData);
+		String reqBody = WeixinPayUtil.mapToXml(reqData);
 
 		return weixinPayHttpTemplate.requestWithoutCert(urlSuffix, uuid, reqBody);
 	}
@@ -223,7 +223,7 @@ public class WeixinPaySdk {
     public String requestWithCert(String urlSuffix, Map<String, String> reqData) throws Exception {
         String uuid = reqData.get(WeixinPaySdkConfig.FIELD_NONCE_STR);
 
-        String reqBody = WxPayUtil.mapToXml(reqData);
+        String reqBody = WeixinPayUtil.mapToXml(reqData);
 
         return weixinPayHttpTemplate.requestWithCert(urlSuffix, uuid, reqBody);
     }
@@ -237,7 +237,7 @@ public class WeixinPaySdk {
 	public Map<String, String> processResponseXml(String xmlStr) throws Exception {
 		String return_code;
 
-		Map<String, String> respData = WxPayUtil.xmlToMap(xmlStr);
+		Map<String, String> respData = WeixinPayUtil.xmlToMap(xmlStr);
 
 		if (respData.containsKey(WeixinPaySdkConfig.FIELD_RETURN_CODE)) {
 			return_code = respData.get(WeixinPaySdkConfig.FIELD_RETURN_CODE);
@@ -274,11 +274,11 @@ public class WeixinPaySdk {
 
 		reqData.put(WeixinPaySdkConfig.FIELD_MCH_ID, weixinPayMerchantConfig.getMchId());
 
-		reqData.put(WeixinPaySdkConfig.FIELD_NONCE_STR, WxPayUtil.generateNonceStr());
+		reqData.put(WeixinPaySdkConfig.FIELD_NONCE_STR, WeixinPayUtil.generateNonceStr());
 
 		reqData.put(WeixinPaySdkConfig.FIELD_SIGN_TYPE, weixinPayApiConfig.getEncryptionMethod());
 
-		reqData.put(WeixinPaySdkConfig.FIELD_SIGN, WxPayUtil.generateSignature(
+		reqData.put(WeixinPaySdkConfig.FIELD_SIGN, WeixinPayUtil.generateSignature(
 			reqData, weixinPayMerchantConfig.getMchKey(), weixinPayApiConfig.getEncryptionMethod())
 		);
 
@@ -293,7 +293,7 @@ public class WeixinPaySdk {
 	 */
 	public boolean isResponseSignatureValid(Map<String, String> reqData) throws Exception {
 		// 返回数据的签名方式和请求中给定的签名方式是一致的
-		return WxPayUtil.isSignatureValid(weixinPayApiConfig, weixinPayMerchantConfig, reqData);
+		return WeixinPayUtil.isSignatureValid(weixinPayApiConfig, weixinPayMerchantConfig, reqData);
 	}
 	
 }
