@@ -40,6 +40,6 @@ public class WeixinPayMerchantConfig {
 	 * 商户证书格式
 	 * [PKCS12, PEM, CER, JKS, ]
 	 */
-	private String CERT_FORMAT;
+	private String certFormat;
 
 }

@@ -74,7 +74,7 @@ public class WeixinPayHttpTemplate {
 
 			InputStream certStream = weixinPayMerchantConfig.getCertStream();
 
-			KeyStore ks = KeyStore.getInstance(weixinPayMerchantConfig.getCERT_FORMAT());
+			KeyStore ks = KeyStore.getInstance(weixinPayMerchantConfig.getCertFormat());
 
 			ks.load(certStream, password);
 
