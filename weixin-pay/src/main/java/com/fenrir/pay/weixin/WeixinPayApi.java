@@ -5,9 +5,7 @@ import java.util.Map;
 import com.fenrir.pay.weixin.config.WeixinPayApiConfig;
 import com.fenrir.pay.weixin.config.WeixinPayMerchantConfig;
 import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
-import com.fenrir.pay.weixin.entity.CloseOrderRequestEntity;
 import com.fenrir.pay.weixin.entity.CloseOrderResponseEntity;
-import com.fenrir.pay.weixin.entity.QueryOrderRequestEntity;
 import com.fenrir.pay.weixin.entity.QueryOrderResponseEntity;
 import com.fenrir.pay.weixin.entity.RefundQueryRequestEntity;
 import com.fenrir.pay.weixin.entity.RefundQueryResponseEntity;
@@ -58,16 +56,15 @@ public class WeixinPayApi {
 	}
 
 	/**
-	 * 订单查询
-	 * @param request
+	 * 查询订单
+	 * @param transactionId 微信订单号，微信订单号和商户订单号二选一必填，建议优先使用微信的订单号
+	 * @param outTradeNo 商户订单号，微信订单号和商户订单号二选一必填，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一
 	 * @return
+	 * @throws Exception
 	 */
-	public QueryOrderResponseEntity queryOrder(QueryOrderRequestEntity request) throws Exception {
-		// 请求转map
-		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
-
+	public QueryOrderResponseEntity queryOrder(String transactionId, String outTradeNo) throws Exception {
 		// 调用API
-		Map<String, String> responseData = weixinPaySdk.queryOrder(requestData);
+		Map<String, String> responseData = weixinPaySdk.queryOrder(transactionId, outTradeNo);
 
 		// 响应转实体
 		return WeixinPayUtil.mapToEntity(QueryOrderResponseEntity.class, responseData);
@@ -75,15 +72,12 @@ public class WeixinPayApi {
 
 	/**
 	 * 关闭订单
-	 * @param request
+	 * @param outTradeNo 订单号
 	 * @return
 	 */
-	public CloseOrderResponseEntity revocationOrder(CloseOrderRequestEntity request) throws Exception {
-		// 请求转map
-		Map<String, String> requestData = WeixinPayUtil.entityToMap(request);
-
+	public CloseOrderResponseEntity revocationOrder(String outTradeNo) throws Exception {
 		// 调用API
-		Map<String, String> responseData = weixinPaySdk.revocationOrder(requestData);
+		Map<String, String> responseData = weixinPaySdk.revocationOrder(outTradeNo);
 
 		// 响应转实体
 		return WeixinPayUtil.mapToEntity(CloseOrderResponseEntity.class, responseData);

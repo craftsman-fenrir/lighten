@@ -14,31 +14,6 @@ import lombok.NoArgsConstructor;
 public class RefundRequestEntity {
 
     /**
-     * appid（必填）
-     */
-    private String appid;
-
-    /**
-     * 商户号（必填）
-     */
-    private String mch_id;
-
-    /**
-     * 随机字符串（必填）
-     */
-    private String nonce_str;
-
-    /**
-     * 签名（必填）
-     */
-    private String sign;
-
-    /**
-     * 签名类型（可选）
-     */
-    private String sign_type;
-
-    /**
      * 微信订单号（二选一） 微信生成的订单号
      */
     private String transaction_id;

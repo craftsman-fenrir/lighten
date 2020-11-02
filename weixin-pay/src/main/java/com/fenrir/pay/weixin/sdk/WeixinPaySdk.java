@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.util.StringUtils;
+
 import com.fenrir.pay.weixin.config.WeixinPayApiConfig;
 import com.fenrir.pay.weixin.config.WeixinPayMerchantConfig;
 import com.fenrir.pay.weixin.config.WeixinPaySdkConfig;
@@ -118,11 +120,19 @@ public class WeixinPaySdk {
 
 	/**
 	 * 查询订单
-	 * @param requestData 微信支付请求参数
+	 * @param transactionId 微信订单号，微信订单号和商户订单号二选一必填，建议优先使用微信的订单号
+	 * @param outTradeNo 商户订单号，微信订单号和商户订单号二选一必填，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, String> queryOrder(Map<String, String> requestData) throws Exception {
+	public Map<String, String> queryOrder(String transactionId, String outTradeNo) throws Exception {
+		Map<String, String> requestData = new HashMap<>();
+		if (!StringUtils.isEmpty(transactionId)) {
+			requestData.put("transaction_id", transactionId);
+		} else {
+			requestData.put("out_trade_no", outTradeNo);
+		}
+	
 		String url;
 
 		if (weixinPayApiConfig.isUseSandBox()) {
@@ -138,11 +148,14 @@ public class WeixinPaySdk {
 
 	/**
 	 * 关闭订单
-	 * @param requestData 微信支付请求参数
+	 * @param outTradeNo 订单号
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, String> revocationOrder(Map<String, String> requestData) throws Exception {
+	public Map<String, String> revocationOrder(String outTradeNo) throws Exception {
+		Map<String, String> requestData = new HashMap<>();
+		requestData.put("out_trade_no", outTradeNo);
+		
 		String url;
 
 		if (weixinPayApiConfig.isUseSandBox()) {

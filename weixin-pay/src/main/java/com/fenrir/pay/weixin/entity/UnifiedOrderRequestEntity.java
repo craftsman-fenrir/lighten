@@ -15,11 +15,6 @@ import lombok.NoArgsConstructor;
 public class UnifiedOrderRequestEntity {
 
 	/**
-	 * appid（必填）
-	 */
-	private String appid;
-
-	/**
 	 * 商品描述（必填）商品简单描述，该字段请按照规范传递，具体请见参数规定
 	 */
 	private String body;
