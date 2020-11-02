@@ -1,6 +1,7 @@
 package com.fenrir.pay.weixin.config;
 
-import java.io.InputStream;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
  * @author fenrir
  *
  */
+@ConfigurationProperties(prefix = "fenrir.pay.weixin.merchant")
+@Component
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -34,7 +37,7 @@ public class WeixinPayMerchantConfig {
 	/**
 	 * 商户证书
 	 */
-	private InputStream certStream;
+	private String certStream;
 
 	/**
 	 * 商户证书格式

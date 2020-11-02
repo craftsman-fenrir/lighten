@@ -6,7 +6,6 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>wx-pay</module>
 		<module>weixin-pay</module>
 	</modules>
 
@@ -16,6 +15,14 @@
 	
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.1.13.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>

@@ -1,5 +1,8 @@
 package com.fenrir.pay.weixin.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +12,8 @@ import lombok.NoArgsConstructor;
  * @author fenrir
  *
  */
+@ConfigurationProperties(prefix = "fenrir.pay.weixin.api")
+@Component
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

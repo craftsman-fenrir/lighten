@@ -1,5 +1,7 @@
 package com.fenrir.pay.weixin.sdk;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -72,7 +74,8 @@ public class WeixinPayHttpTemplate {
 			// 证书
 			char[] password = weixinPayMerchantConfig.getMchId().toCharArray();
 
-			InputStream certStream = weixinPayMerchantConfig.getCertStream();
+			File file = new File(weixinPayMerchantConfig.getCertStream());   
+			InputStream certStream = new FileInputStream(file);
 
 			KeyStore ks = KeyStore.getInstance(weixinPayMerchantConfig.getCertFormat());
 
